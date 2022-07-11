@@ -1,8 +1,8 @@
 class CurrentUserController < ApplicationController
   before_action :authenticate_user!
-  before_action :authenticate_admin, except: [:show, :index]
+  before_action :authenticate_admin, except: [:show, :index, :user_list]
   before_action :authenticate_superadmin, only: [:create_admin]
-  before_action :get_user, except: [:index, :create, :create_admin]
+  before_action :get_user, except: [:index, :create, :create_admin, :user_list]
 
   def index
     render json: current_user, status: :ok
@@ -43,25 +43,19 @@ class CurrentUserController < ApplicationController
     }, status: :ok
   end
 
-  def create_admin
-    user = User.create!(admin_params)
+  def user_list
+    if current_user.role == 'Superadmin'
+      users = User.where.not(role: 'Superadmin')
+    else
+      users = User.where(role: 'User')
+    end
 
-    render json: json = {
-      status: 201, 
-      message: "Admin registered!",
-      user: user.email,
-      role: user.role,
-      name: user.name
-    }, status: :ok
+    render json: users
   end
 
   private
 
   def user_params 
-    params.require(:user).permit(:email, :password, :name, :phone_number)
-  end
-
-  def admin_params 
     params.require(:user).permit(:email, :password, :name, :phone_number, :role)
   end
 
