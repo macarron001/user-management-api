@@ -16,6 +16,8 @@ gem 'devise'
 gem 'devise-jwt'
 gem 'fast_jsonapi'
 
+gem 'rspec-rails', '~> 4.0', '>= 4.0.1'
+
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 # gem "jbuilder"
 
