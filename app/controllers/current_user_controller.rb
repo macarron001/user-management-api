@@ -1,5 +1,6 @@
 class CurrentUserController < ApplicationController
   before_action :authenticate_user!
+  before_action :authenticate_admin, except: [:show, :index]
   before_action :get_user, except: [:index, :create]
 
   def index
@@ -49,5 +50,12 @@ class CurrentUserController < ApplicationController
 
   def get_user
     @user = User.find(params[:id])
+  end
+
+  def authenticate_admin
+    render json: json = {
+      status: 401, 
+      message: 'Unauthorized user.',
+    }, status: :unauthorized if current_user.role == 'User'
   end
 end
